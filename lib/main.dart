@@ -34,8 +34,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _minute = 0;
   int _second = 0;
+  int _micro = 0;
+
+  Timer? _minutes;
   Timer? _timer;
+  Timer? _micros;
   bool _isRunning = false;
 
   @override
@@ -44,7 +49,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void stopTimer() {
+    _minutes?.cancel();
     _timer?.cancel();
+    _micros?.cancel();
   }
 
   @override
@@ -61,9 +68,30 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                '$_second',
-                style: TextStyle(fontSize: 100),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$_minute'.padLeft(2, "0"),
+                    style: TextStyle(fontSize: 50),
+                  ),
+                  Text(
+                    ':',
+                    style: TextStyle(fontSize: 50),
+                  ),
+                  Text(
+                    '$_second'.padLeft(2, "0"),
+                    style: TextStyle(fontSize: 50),
+                  ),
+                  Text(
+                    '.',
+                    style: TextStyle(fontSize: 50),
+                  ),
+                  Text(
+                    '$_micro'.padLeft(2, "0"),
+                    style: TextStyle(fontSize: 50),
+                  ),
+                ],
               ),
               ElevatedButton(
                 onPressed: (){
@@ -98,26 +126,46 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void toggleTimer() {
     if(_isRunning) {
+      _minutes?.cancel();
       _timer?.cancel();
+      _micros?.cancel();
     } else {
+      _minutes = Timer.periodic(
+        const Duration(minutes: 1),
+              (timer) {
+          setState((){
+            _minute++;
+          });
+        }
+      );
+
       _timer = Timer.periodic(
         const Duration(seconds: 1),
             (timer) {
           setState(() {
             _second++;
           });
-          
-          if(_second == 10) {
-            resetTimer();
 
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => NextPage()
-              ),
-            );
+          if(_second == 60) {
+            _second = 0;
           }
-          },
+        },
       );
+
+      _micros = Timer.periodic(
+        const Duration(milliseconds: 10),
+            (timer) {
+          setState(() {
+            _micro++;
+          });
+
+          if(_micro == 100) {
+            _micro = 0;
+          }
+        },
+      );
+
+
     }
     setState(() {
       _isRunning = !_isRunning;
@@ -126,9 +174,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void resetTimer() {
     _timer?.cancel();
+    _minutes?.cancel();
+    _micros?.cancel();
 
     setState(() {
+      _minute = 0;
       _second = 0;
+      _micro = 0;
       _isRunning = false;
     });
   }
