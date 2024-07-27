@@ -38,9 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _second = 0;
   int _micro = 0;
 
-  Timer? _minutes;
   Timer? _timer;
-  Timer? _micros;
   bool _isRunning = false;
 
   @override
@@ -49,9 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void stopTimer() {
-    _minutes?.cancel();
     _timer?.cancel();
-    _micros?.cancel();
   }
 
   @override
@@ -120,15 +116,12 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
       ),
-
     );
   }
 
   void toggleTimer() {
     if(_isRunning) {
-      _minutes?.cancel();
       _timer?.cancel();
-      _micros?.cancel();
     } else {
 
       _timer = Timer.periodic(
@@ -148,11 +141,6 @@ class _MyHomePageState extends State<MyHomePage> {
           }
         },
       );
-
-
-
-
-
     }
     setState(() {
       _isRunning = !_isRunning;
@@ -161,8 +149,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void resetTimer() {
     _timer?.cancel();
-    _minutes?.cancel();
-    _micros?.cancel();
 
     setState(() {
       _minute = 0;
