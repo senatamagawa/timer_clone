@@ -130,29 +130,8 @@ class _MyHomePageState extends State<MyHomePage> {
       _timer?.cancel();
       _micros?.cancel();
     } else {
-      _minutes = Timer.periodic(
-        const Duration(minutes: 1),
-              (timer) {
-          setState((){
-            _minute++;
-          });
-        }
-      );
 
       _timer = Timer.periodic(
-        const Duration(seconds: 1),
-            (timer) {
-          setState(() {
-            _second++;
-          });
-
-          if(_second == 60) {
-            _second = 0;
-          }
-        },
-      );
-
-      _micros = Timer.periodic(
         const Duration(milliseconds: 10),
             (timer) {
           setState(() {
@@ -161,9 +140,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
           if(_micro == 100) {
             _micro = 0;
+            _second++;
+          }
+          if(_second == 60) {
+            _second = 0;
+            _minute++;
           }
         },
       );
+
+
+
 
 
     }
